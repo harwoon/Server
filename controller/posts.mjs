@@ -1,5 +1,6 @@
 import express from "express"
 import * as postRepository from "../data/posts.mjs"
+import { findById } from "../data/auth.mjs"
 
 
 // 포스트를 작성하는 함수
@@ -29,4 +30,39 @@ export async function getPost(req, res) {
     } else {
         res.status(404).json({ message: `${postid}의 포스트가 없습니다` })
     }
+}
+
+// 포스트를 변경하는 함수
+export async function updatePost(req, res) {
+    const postid = req.params.postid
+    const text = req.body.text
+    const post = await postRepository.getById(postid)
+
+    if (!post) {
+        returnres.status(404).json({ message: `${postid}의 포스트가 없습니다` })
+    }
+    if (post.idx !== req.id) {
+        return res.sendStatus(403)
+    }
+
+    const updated = await postRepository.update(postid, text)
+    res.status(200).json(updated)
+}
+
+// 포스트를 삭제하는 함수
+export async function deletePost(req, res) {
+
+    const postid = req.params.postid
+    const post = await postRepository.getById(postid)
+
+    if (!post) {
+        return res.status(404).json({ message: `${postid}의 포스트가 없습니다` })
+    }
+
+    if (post.idx !== req.id) {
+        return res.sendStatus(403)
+    }
+
+    await postRepository.remove(postid)
+    res.sendStatus(204)
 }

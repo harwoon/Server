@@ -1,4 +1,4 @@
-import MongoDB, { ObjectId } from "mongodb"
+import MongoDB, { ObjectId, ReturnDocument } from "mongodb"
 import * as UserRepository from "./auth.mjs"
 import { getPosts } from "../db/database.mjs"
 
@@ -28,6 +28,20 @@ export async function getAllByUserid(userid) {
 // 글 번호(id)에 대한 포스트를 리턴
 export async function getById(postid) {
     return getPosts().find({ _id: new ObjectId(postid) }).next().then(mapOptionalPost)
+}
+
+// 글 번호에 대한 포스트 수정
+export async function update(postid, text) {
+    return getPosts().findOneAndUpdate(
+        { _id: new ObjectId(postid) },
+        { $set: { text } },
+        { ReturnDocument: "after" }
+    ).then((result)=>result)
+}
+
+// 글 번호 포스트 삭제
+export async function remove(postid) {
+    return getPosts().deleteOne({ _id: new ObjectId(postid) })
 }
 
 function mapOptionalPost(post) {

@@ -18,7 +18,11 @@ router.get("/:postid",isAuth,postController.getPost)
 router.post("/", isAuth, postController.createPost) // 로그인한 사용자만 작성 가능하도록
 
 // 포스트 수정하기
+// http://127.0.0.1:8080/post/:id (PUT)
+router.put("/:postid",isAuth,postController.updatePost)
 
 // 포스트 삭제하기
+// http://127.0.0.1:8080/post/:id (DELETE)
+router.delete("/:postid",isAuth,postController.deletePost)
 
 export default router
