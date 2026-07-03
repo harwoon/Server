@@ -1,5 +1,5 @@
 import express from "express"
-import { config } from "./config.mjs"
+import { config } from "./config.mjs" // config를 export할 때 { } 형태로 내보냈기 때문
 import { connectDB } from "./db/database.mjs"
 import authRouter from "./router/auth.mjs"
 import postsRouter from "./router/posts.mjs"
