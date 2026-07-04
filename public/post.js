@@ -58,6 +58,7 @@ function renderPosts(posts) {
     })
 }
 
+// 내 글 수정하기 삭제하기
 postList.addEventListener("click",(event)=>{
     if (event.target.classList.contains("updateBtn")) {
         const id = event.target.dataset.id;
@@ -69,6 +70,7 @@ postList.addEventListener("click",(event)=>{
         const id = event.target.dataset.id;
         console.log("삭제 클릭:", id);
 
+        deletePost(id)
     }
     
     loadPosts()
@@ -82,7 +84,7 @@ async function updatePost(postid){
     if (!newText || newText.trim() === "") return
 
     try{
-        const response = await fetch(`/post/${postid}`,{
+        await fetch(`/post/${postid}`,{
             method: "PUT",
             headers: {
                 "Content-Type" : "application/json",
@@ -91,12 +93,29 @@ async function updatePost(postid){
             body : JSON.stringify({text:newText})
         })
 
-        if(!response.ok){
-            await renderPosts()
-        }
-
     }catch(error){
         console.log("포스트 수정 실패:",error)
+    }
+}
+
+// 게시글 삭제하기
+async function deletePost(postid){
+    const check = confirm("정말 삭제하시겠습니까?")
+    if (!check) return
+
+    const token = localStorage.getItem("token")
+
+    try{
+        await fetch(`/post/${postid}`,{
+            method: "DELETE",
+            headers: {
+                "Content-Type" : "application/json",
+                "Authorization" : "Bearer " + token
+            }
+        })
+
+    }catch(error){
+        console.log("포스트 삭제 실패:",error)
     }
 }
 
