@@ -21,3 +21,5 @@ connectDB().then(() => {
         console.log("DB/웹 서버 실행 중...")
     })
 }).catch(console.error)
+
+//git 계정 변경
