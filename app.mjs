@@ -8,6 +8,7 @@ const app = express()
 
 // 미들웨어 등록
 app.use(express.json())
+app.use(express.static("public"))
 app.use("/auth", authRouter)
 app.use("/post", postsRouter)
 
