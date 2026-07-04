@@ -146,6 +146,30 @@ getMineBtn.addEventListener("click", async () => {
 
 })
 
-//addBtn.addEventListener()
+addBtn.addEventListener("click",async()=>{
+    const text = postInput.value.trim()
+    if(!text){
+        alert("내용을 입력하세요")
+        return
+    }
+
+    try{
+
+        const response = await fetch("/post", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify({text})
+        })
+
+        postInput.value=""
+        loadPosts()
+
+    }catch(error){
+        console.log("포스트 추가 실패:",error)
+    }
+})
 
 loadPosts()
