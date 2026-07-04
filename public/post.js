@@ -19,30 +19,89 @@ async function loadPosts() {
 
     } catch (error) {
         console.log("전체 포스트 조회 실패")
+        renderPosts([])
     }
 
 }
 
 function renderPosts(posts) {
+    userid = localStorage.getItem("userid")
 
     postList.innerHTML = ""
-    const postArray = Array.isArray(posts) ? posts : Object.values(posts)
+    const data = posts || []
+    const postArray = Array.isArray(data) ? posts : Object.values(data)
+
+    if (!Array.isArray(postArray)) {
+        console.error("데이터 변환 실패:", postArray);
+        return;
+    }
 
     postArray.forEach((post) => {
         const li = document.createElement("li")
+        let buttons = ""
+
+        if(userid === post.userid){
+            buttons = `
+        <button class="updateBtn" data-id="${post._id}">수정</button>
+        <button class="deleteBtn" data-id="${post._id}">삭제</button>
+        `
+        }
 
         li.innerHTML = `
         <span>${post.text}</span>
         <span>${post.createdAt}</span>
         <span>${post.userid}</span>
-        <div class="memo-buttons">
-        </div>
+        ${buttons}
         `
 
         postList.appendChild(li)
     })
 }
 
+postList.addEventListener("click",(event)=>{
+    if (event.target.classList.contains("updateBtn")) {
+        const id = event.target.dataset.id;
+
+        updatePost(id)
+    }
+
+    if (event.target.classList.contains("deleteBtn")) {
+        const id = event.target.dataset.id;
+        console.log("삭제 클릭:", id);
+
+    }
+    
+    loadPosts()
+})
+
+//게시글 수정하기
+async function updatePost(postid){
+    const newText = prompt("수정할 내용을 입력하세요.")
+    const token = localStorage.getItem("token")
+    
+    if (!newText || newText.trim() === "") return
+
+    try{
+        const response = await fetch(`/post/${postid}`,{
+            method: "PUT",
+            headers: {
+                "Content-Type" : "application/json",
+                "Authorization" : "Bearer " + token
+            },
+            body : JSON.stringify({text:newText})
+        })
+
+        if(!response.ok){
+            await renderPosts()
+        }
+
+    }catch(error){
+        console.log("포스트 수정 실패:",error)
+    }
+}
+
+
+// 내가 쓴 게시글 가져오기
 getMineBtn.addEventListener("click", async () => {
 
     try {

@@ -39,7 +39,7 @@ export async function updatePost(req, res) {
     const post = await postRepository.getById(postid)
 
     if (!post) {
-        returnres.status(404).json({ message: `${postid}의 포스트가 없습니다` })
+        return res.status(404).json({ message: `${postid}의 포스트가 없습니다` })
     }
     if (post.idx !== req.id) {
         return res.sendStatus(403)
